@@ -16,6 +16,8 @@ public class ControlCenter {
     /** décompte utilisé pour quantifier le nombre de mesures archivées */
     private int mesureCompt = 1;
 
+    private String stateCommand = "";
+
     /**
      * Constructeur, avec archive et constellation
      * 
@@ -47,6 +49,10 @@ public class ControlCenter {
      */
     public ArrayList<Satellite> getConstellation() {
         return this.constellation;
+    }
+
+    public String getStateCommand() {
+        return this.stateCommand;
     }
 
     /**
@@ -93,59 +99,68 @@ public class ControlCenter {
         }
 
         String correctCommand = satOperator;
+
+        if (correctCommand.length() == order.length()) {
+            return;
+        }
+
+        String subsysOperator = s.next();
+
+        // On vérifie que l'ordre possède plus que juste le satellite et le sous-système
+        correctCommand = correctCommand + ":" + subsysOperator;
         if (!(correctCommand.length() == order.length())) {
-            String subsysOperator = s.next();
+            String doesOperator = s.next();
 
-            // On vérifie que l'ordre possède plus que juste le satellite et le sous-système
-            correctCommand = correctCommand + ":" + subsysOperator;
-            if (!(correctCommand.length() == order.length())) {
-                String doesOperator = s.next();
+            // On vérifie que l'ordre ne possède pas trop données
+            correctCommand = correctCommand + ":" + doesOperator;
+            if (correctCommand.length() == order.length()) {
+                // compteur qui s'incrémente si le satellite demandé par l'utilisateur n'est pas
+                // le satellite regardé dans le parcours de la boucle for
+                int compt = 0;
 
-                // On vérifie que l'ordre ne possède pas trop données
-                correctCommand = correctCommand + ":" + doesOperator;
-                if (correctCommand.length() == order.length()) {
-                    // compteur qui s'incrémente si le satellite demandé par l'utilisateur n'est pas
-                    // le satellite regardé dans le parcours de la boucle for
-                    int compt = 0;
+                // Parcours la liste des satellites du ControlCenter
+                for (Satellite satel : constellation) {
 
-                    // Parcours la liste des satellites du ControlCenter
-                    for (Satellite satel : constellation) {
+                    // Vérifie si le satellite demandé par l'opérateur correspond à celui dans le
+                    // parcours de la boucle for
+                    if (satel.getName().equals(satOperator)) {
 
-                        // Vérifie si le satellite demandé par l'opérateur correspond à celui dans le
-                        // parcours de la boucle for
-                        if (satel.getName().equals(satOperator)) {
+                        // On envoie la commande au satellite en question. Il nous retourne "OK", "KO"
+                        // (avec spécifications) ou la mesure.
+                        String data = satel.getSatelliteControl().invokeCommand(subsysOperator, doesOperator,
+                                this.mesureCompt);
+                        this.stateCommand = data;
+                        // Si on doit archiver la mesure alors data contiendra "mesure"
 
-                            // On envoie la commande au satellite en question. Il nous retourne "OK", "KO"
-                            // (avec spécifications) ou la mesure.
-                            String data = satel.getSatelliteControl().invokeCommand(subsysOperator, doesOperator,
-                                    this.mesureCompt);
-                            // Si on doit archiver la mesure alors data contiendra "mesure"
-                            if (data.contains("mesure")) {
-                                System.out.println("OK");
-                                addArchive(data);
-                                // Incrémentation du compteur de mesure
-                                this.mesureCompt++;
-                            } else {
-                                System.out.println(data);
-                            }
+                        if (data.contains("mesure")) {
 
+                            System.out.println("OK");
+                            this.stateCommand = "OK";
+                            addArchive(data);
+                            // Incrémentation du compteur de mesure
+                            this.mesureCompt++;
+                        } else {
+                            System.out.println(data);
                         }
 
-                        // Incrémentation si le satellite demandé n'est pas le satellite regardé
-                        else {
-                            compt++;
-                        }
                     }
 
-                    // Si le satellite demandé n'est pas connu du ControlCenter
-                    if (compt == constellation.size()) {
-                        System.out.println("KO : Wrong satellite");
+                    // Incrémentation si le satellite demandé n'est pas le satellite regardé
+                    else {
+                        compt++;
                     }
-                    // }
-
                 }
+
+                // Si le satellite demandé n'est pas connu du ControlCenter
+                if (compt == constellation.size()) {
+                    System.out.println("KO : Wrong satellite");
+                    this.stateCommand = "KO : Wrong satellite";
+                }
+                // }
+
             }
         }
+
     }
 
 }

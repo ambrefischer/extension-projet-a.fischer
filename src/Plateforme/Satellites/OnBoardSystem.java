@@ -82,22 +82,22 @@ public class OnBoardSystem {
         if (existEquipment(subsysOperator, doesOperator) == "OK") {
 
             // On retrouve le bon sous-système
-            int i = 0;
-            SubSystem subsys = equipments.get(i);
-            while (!(subsys.getName().equals(subsysOperator))) {
-                subsys = equipments.get(i + 1);
-            }
 
-            // Si il s'agit d'une T/C
-            if (doesOperator.equals("ON") || doesOperator.equals("OFF")) {
+            System.out.println(subsysOperator);
+            for (SubSystem subsys : equipments) {
+                if (subsys.getName().equals(subsysOperator)) {
+                    // Si il s'agit d'une T/C
+                    if (doesOperator.equals("ON") || doesOperator.equals("OFF")) {
 
-                response = subsys.command();
+                        response = subsys.command();
 
-            }
+                    }
 
-            // Si il s'agit d'une T/M
-            else {
-                response = subsys.createData(mesureCompt);
+                    // Si il s'agit d'une T/M
+                    else {
+                        response = subsys.createData(mesureCompt);
+                    }
+                }
             }
 
         }
