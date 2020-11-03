@@ -9,7 +9,7 @@ import java.awt.*;
 import Plateforme.Satellites.Satellite;
 import Plateforme.Satellites.SubSystem;
 
-import Actions.Button;
+import Actions.ClickedButton;
 
 //new JLabel("<html><font color=black size=+10> + ss.getName() + </i></font></html>")
 
@@ -48,9 +48,12 @@ public class Ihm {
                 JButton button_DATA = new JButton("DATA");
 
                 // Raccord des signaux
-                button_ON.addActionListener(new Button(cc, sat.getName(), ss.getName(), "ON", label));
-                button_OFF.addActionListener(new Button(cc, sat.getName(), ss.getName(), "OFF", label));
-                button_DATA.addActionListener(new Button(cc, sat.getName(), ss.getName(), "DATA", label));
+                button_ON.addActionListener(
+                        new ClickedButton(cc, sat.getName(), ss.getName(), "ON", label, button_ON, button_OFF));
+                button_OFF.addActionListener(
+                        new ClickedButton(cc, sat.getName(), ss.getName(), "OFF", label, button_ON, button_OFF));
+                button_DATA.addActionListener(
+                        new ClickedButton(cc, sat.getName(), ss.getName(), "DATA", label, button_DATA, button_ON));
 
                 // Assemblage
                 pannel.add(label);
