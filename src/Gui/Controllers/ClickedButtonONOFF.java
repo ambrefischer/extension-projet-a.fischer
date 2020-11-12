@@ -1,12 +1,12 @@
-package Ihm.Actions;
-
-import Plateforme.ControlCenter;
+package Gui.Controllers;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
+
+import Gui.Model;
 
 import java.awt.Color;
 
@@ -20,7 +20,6 @@ public class ClickedButtonONOFF extends ClickedButton {
     /**
      * Constructeur hérite de ClickedButton
      * 
-     * @param cc
      * @param nameSat
      * @param nameProcedure
      * @param message
@@ -29,9 +28,9 @@ public class ClickedButtonONOFF extends ClickedButton {
      * @param button_ON
      * @param button_OFF
      */
-    public ClickedButtonONOFF(ControlCenter cc, String nameSat, String nameSS, String message, JLabel label,
+    public ClickedButtonONOFF(Model model, String nameSat, String nameSS, String message, JLabel label,
             JTextPane textPane, JButton button_ON, JButton button_OFF) {
-        super(cc, nameSat, nameSS, message, label, textPane);
+        super(model, nameSat, nameSS, message, label, textPane);
         this.button_ON = button_ON;
         this.button_OFF = button_OFF;
     }
@@ -44,12 +43,12 @@ public class ClickedButtonONOFF extends ClickedButton {
     public void actionPerformed(ActionEvent e) {
         System.out.println(nameSat + ":" + nameSS + ":" + message);
 
-        // exectute la commande
-        cc.command(nameSat + ":" + nameSS + ":" + message);
+        // fait appel au model pour exécuter la commande
+        model.doTM(nameSat, nameSS, message);
 
         // si la commande est valide alors on met le nom du sous-système en vert
         // et on ajoute la commande dans la console de sortie
-        if (cc.getStateCommand() == "OK") {
+        if (model.getStatusCommand()) {
             label.setForeground(Color.GREEN);
             appendToPane(textPane, nameSat + ":" + nameSS + ":" + message + "\n", Color.GREEN);
         }

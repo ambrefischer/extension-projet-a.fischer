@@ -1,5 +1,3 @@
-package Ihm;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,6 +7,7 @@ import Plateforme.ControlCenter;
 import Plateforme.Satellites.*;
 import Plateforme.Satellites.SatelliteFamilies.*;
 import Plateforme.Satellites.SubSystems.Imager;
+import Plateforme.Satellites.SubSystems.SubSystem;
 
 public class PlateformCreation {
 

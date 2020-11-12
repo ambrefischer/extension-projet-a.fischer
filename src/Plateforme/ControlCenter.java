@@ -3,7 +3,7 @@ package Plateforme;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import Plateforme.Satellites.Satellite;
+import Plateforme.Satellites.SatelliteFamilies.Satellite;
 
 public class ControlCenter {
 

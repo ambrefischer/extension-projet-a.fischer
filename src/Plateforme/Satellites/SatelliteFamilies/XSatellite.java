@@ -1,7 +1,6 @@
 package Plateforme.Satellites.SatelliteFamilies;
 
 import Plateforme.Satellites.OnBoardSystem;
-import Plateforme.Satellites.Satellite;
 
 public class XSatellite extends Satellite {
 

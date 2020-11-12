@@ -1,7 +1,6 @@
 package Plateforme.Satellites.SubSystems;
 
 import Mesures.Image;
-import Plateforme.Satellites.SubSystem;
 
 public class Imager extends SubSystem {
 
@@ -17,7 +16,7 @@ public class Imager extends SubSystem {
      * Crée une mesure de type Bipmap accompagnée de sa date et la renvoie en format
      * string afin qu'elle puisse être archivée
      */
-    protected String createData(int mesureCompt) {
+    public String createData(int mesureCompt) {
         // Création de la mesure
         Image m = new Image();
         m.take_mesure();

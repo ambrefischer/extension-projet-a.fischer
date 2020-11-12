@@ -1,4 +1,4 @@
-package Ihm;
+package Gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -20,16 +20,16 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
-import Ihm.Actions.ClickedButton;
-import Ihm.Actions.ClickedButtonONOFF;
+import Gui.Controllers.*;
 import Plateforme.ControlCenter;
-import Plateforme.Satellites.Satellite;
+import Plateforme.Satellites.SatelliteFamilies.Satellite;
 
 //new JLabel("<html><font color=black size=+10> + ss.getName() + </i></font></html>")
 
-public class Ihm {
+public class View {
     /** fenêtre de l'ihm */
     private JFrame window;
+    private ControlCenter cc;
 
     /**
      * constructeur de l'Ihm qui va initialiser la fenêtre avec les onglets et les
@@ -37,11 +37,10 @@ public class Ihm {
      * 
      * @throws IOException
      */
-    public Ihm() throws IOException {
+    public View(ControlCenter cc) throws IOException {
 
-        // Création du ControlCenter
-        PlateformCreation c = new PlateformCreation();
-        Plateforme.ControlCenter cc = c.createCC();
+        // Lie le ControlCenter à l'Ihm
+        this.cc = cc;
 
         // fenêtre de l'ihm
         JFrame window = new JFrame("Control Center");
@@ -65,8 +64,8 @@ public class Ihm {
             int nbSS = subsystems.size();
 
             // on crée un panneau par sous-système
-            JPanel pannel = new JPanel();
-            pannel.setLayout(new GridLayout(nbSS, 1));
+            JPanel panel = new JPanel();
+            panel.setLayout(new GridLayout(nbSS, 1));
 
             // pour chaque sous-système de satellite :
             for (int j = 0; j < nbSS; j++) {
@@ -81,21 +80,17 @@ public class Ihm {
                 JButton button_DATA = new JButton("DATA");
 
                 // Raccord des signaux
-                button_ON.addActionListener(
-                        new ClickedButtonONOFF(cc, sat.getName(), ssName, "ON", label, tPane, button_ON, button_OFF));
-                button_OFF.addActionListener(
-                        new ClickedButtonONOFF(cc, sat.getName(), ssName, "OFF", label, tPane, button_ON, button_OFF));
-                button_DATA.addActionListener(new ClickedButton(cc, sat.getName(), ssName, "DATA", label, tPane));
+                setControllers(button_ON, button_OFF, button_DATA, sat, ssName, label, tPane);
 
                 // Assemblage
-                pannel.add(label);
-                pannel.add(button_ON);
-                pannel.add(button_OFF);
-                pannel.add(button_DATA);
+                panel.add(label);
+                panel.add(button_ON);
+                panel.add(button_OFF);
+                panel.add(button_DATA);
             }
 
             // on met le tout dans l'onglet
-            tabs.addTab(sat.getName(), pannel);
+            tabs.addTab(sat.getName(), panel);
         }
 
         // on met le tout dans la fenêtre principale
@@ -115,6 +110,16 @@ public class Ihm {
      */
     public JFrame getWindow() {
         return this.window;
+    }
+
+    private void setControllers(JButton button_ON, JButton button_OFF, JButton button_DATA, Satellite sat,
+            String ssName, JLabel label, JTextPane tPane) {
+        button_ON.addActionListener(new ClickedButtonONOFF(new Model(this.cc), sat.getName(), ssName, "ON", label,
+                tPane, button_ON, button_OFF));
+        button_OFF.addActionListener(new ClickedButtonONOFF(new Model(this.cc), sat.getName(), ssName, "OFF", label,
+                tPane, button_ON, button_OFF));
+        button_DATA
+                .addActionListener(new ClickedButton(new Model(this.cc), sat.getName(), ssName, "DATA", label, tPane));
     }
 
     /**

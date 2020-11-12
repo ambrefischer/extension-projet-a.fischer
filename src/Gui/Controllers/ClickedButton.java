@@ -1,6 +1,4 @@
-package Ihm.Actions;
-
-import Plateforme.ControlCenter;
+package Gui.Controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,13 +10,16 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
+
+import Gui.Model;
+
 import java.awt.Color;
 
 public class ClickedButton implements ActionListener {
     /**
      * Permettent de faire la T/C ou T/M
      */
-    protected ControlCenter cc;
+    protected Model model;
     protected String nameSat;
     protected String nameSS;
     protected String message;
@@ -39,9 +40,8 @@ public class ClickedButton implements ActionListener {
      * @param label
      * @param textPane
      */
-    public ClickedButton(ControlCenter cc, String nameSat, String nameSS, String message, JLabel label,
-            JTextPane textPane) {
-        this.cc = cc;
+    public ClickedButton(Model model, String nameSat, String nameSS, String message, JLabel label, JTextPane textPane) {
+        this.model = model;
         this.nameSat = nameSat;
         this.nameSS = nameSS;
         this.message = message;
@@ -56,12 +56,13 @@ public class ClickedButton implements ActionListener {
      */
     public void actionPerformed(ActionEvent e) {
         System.out.println(nameSat + ":" + nameSS + ":" + message);
-        // exécute la commande
-        cc.command(nameSat + ":" + nameSS + ":" + message);
+
+        // fait appel au model pour exécuter la commande
+        model.doTM(nameSat, nameSS, message);
 
         // Si la commande est valide, on met le nom du sous-système en vert
         // et on ajoute la commande dans la console de sortie
-        if (cc.getStateCommand() == "OK") {
+        if (model.getStatusCommand()) {
             appendToPane(textPane, nameSat + ":" + nameSS + ":" + message + "\n", Color.GREEN);
             label.setForeground(Color.GREEN);
         }

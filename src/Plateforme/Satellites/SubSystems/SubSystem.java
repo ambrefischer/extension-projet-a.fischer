@@ -1,4 +1,4 @@
-package Plateforme.Satellites;
+package Plateforme.Satellites.SubSystems;
 
 public abstract class SubSystem {
 
@@ -42,7 +42,7 @@ public abstract class SubSystem {
      * 
      * @return "OK"
      */
-    protected String command() {
+    public String command() {
         this.status = !this.status;
         return "OK";
     }
@@ -53,7 +53,7 @@ public abstract class SubSystem {
      * @param mesureCompt
      * @return
      */
-    protected abstract String createData(int mesureCompt);
+    public abstract String createData(int mesureCompt);
 
     /**
      * Visualise les sous-sytèmes avec leurs noms et leur status

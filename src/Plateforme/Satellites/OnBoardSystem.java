@@ -2,6 +2,8 @@ package Plateforme.Satellites;
 
 import java.util.ArrayList;
 
+import Plateforme.Satellites.SubSystems.SubSystem;
+
 public class OnBoardSystem {
 
     /**
