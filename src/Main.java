@@ -1,15 +1,12 @@
+import java.io.IOException;
+
 import Controller.ControlCenter;
-import View.Gui;
 
 public class Main {
-    public static void main(String[] args) {
-        try {
-            PlateformCreation pc = new PlateformCreation();
-            ControlCenter c = pc.createCC();
-            c.initController();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    public static void main(String[] args) throws IOException {
 
+        PlateformCreation pc = new PlateformCreation();
+        ControlCenter cc = pc.createCC();
+        cc.initController();
     }
 }

@@ -3,16 +3,13 @@ package Controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import Controller.ActionListener.ButtonListener;
 import Models.SatelliteFamilies.Satellite;
 import View.Gui;
-import View.Model;
-import View.Controllers.ClickedButton;
-import View.Controllers.ClickedButtonONOFF;
 
 public class ControlCenter {
 
@@ -21,13 +18,17 @@ public class ControlCenter {
 
     /** ensemble des satellites visible par le ControlCenter */
     private ArrayList<Satellite> constellation;
-    private ArrayList<String> constelString = new ArrayList<String>();
+    private ArrayList<String> constelString;
 
     /** décompte utilisé pour quantifier le nombre de mesures archivées */
     private int mesureCompt = 1;
 
+    /**
+     * permet de visualiser si la commande a été effectuée : "OK" ou non : "KO:..."
+     */
     private String stateCommand = "";
 
+    /** interface graphique : view */
     private Gui view;
 
     /**
@@ -37,17 +38,19 @@ public class ControlCenter {
      * @param constellation
      * @throws IOException
      */
-
     public ControlCenter(ArrayList<String> archive, ArrayList<Satellite> constellation) throws IOException {
         this.archive = archive;
         this.constellation = constellation;
+
+        // construit constelString à partir des satellites contenus dans constellation
+        constelString = new ArrayList<String>();
 
         for (Satellite satellite : constellation) {
             constelString.add(satellite.getName());
         }
 
+        // construction de la view
         view = new Gui(constelString);
-
     }
 
     /**
@@ -71,6 +74,11 @@ public class ControlCenter {
         return this.constellation;
     }
 
+    /**
+     * Getter
+     * 
+     * @return stateCommand
+     */
     public String getStateCommand() {
         return this.stateCommand;
     }
@@ -92,11 +100,16 @@ public class ControlCenter {
         return "{" + " archive='" + getArchive() + "'" + ", constellation='" + getConstellation() + "'" + "}";
     }
 
+    /** change la constellation de l'ihm */
     public void initView() {
         view.constellation(constelString);
     }
 
+    /**
+     * permet de relier les signaux des boutons aux actions correspondantes
+     */
     public void initController() {
+        // contient les boutons et les labels
         HashMap<String, HashMap<String, HashMap<String, JButton>>> satMap = view.getSatMap();
         HashMap<String, HashMap<String, JLabel>> labelSatMap = view.getLabelSatMap();
 
@@ -106,103 +119,77 @@ public class ControlCenter {
 
             for (String ssSysKey : ssSysMap.keySet()) {
                 HashMap<String, JButton> buttonsMap = ssSysMap.get(ssSysKey);
-                buttonsMap.get("ON").addActionListener(new ClickedButton(new Model(this), satKey, ssSysKey, "ON", view,
-                        labelSsSysMap.get(buttonsMap)));
-                buttonsMap.get("OFF").addActionListener(new ClickedButton(new Model(this), satKey, ssSysKey, "ON", view,
-                        labelSsSysMap.get(buttonsMap)));
-                buttonsMap.get("DATA").addActionListener(new ClickedButton(new Model(this), satKey, ssSysKey, "DATA",
-                        view, labelSsSysMap.get(buttonsMap)));
+
+                // on récupère tous les boutons existants de la HashMap du view pour leur
+                // associer un ButtonListener en spécifiant le nom du satellite et le nom du
+                // sous-système correspondand à chaque fois
+                ButtonListener onListener = new ButtonListener(this, satKey, ssSysKey, "ON", view,
+                        labelSsSysMap.get(ssSysKey));
+                buttonsMap.get("ON").addActionListener(onListener);
+
+                ButtonListener offListener = new ButtonListener(this, satKey, ssSysKey, "OFF", view,
+                        labelSsSysMap.get(ssSysKey));
+                buttonsMap.get("OFF").addActionListener(offListener);
+
+                ButtonListener dataListener = new ButtonListener(this, satKey, ssSysKey, "DATA", view,
+                        labelSsSysMap.get(ssSysKey));
+                buttonsMap.get("DATA").addActionListener(dataListener);
             }
         }
+
     }
 
     /**
      * Vérifie que le ControlCenter possède le satellite demandé et envoie la suite
      * de l'ordre au satellite imprime les résultats d'ordre : OK ou KO avec
      * spécification et éventuellement archive la mesure si demandé.
+     * 
+     * @param satellite
+     * @param subsystem
+     * @param message
      */
-    public void command(String message) {
-        // System.out.println("Veuillez rentrer une commande du type
-        // SATELLITE:SUBSYSTEM:COMMAND/DATA");
+    public void command(String satellite, String subsystem, String message) {
 
-        // Lecture de l'ordre de l'utilisateur
-        Scanner sc = new Scanner(message);
-        String order = sc.next();
+        // compteur qui s'incrémente si le satellite demandé par l'utilisateur n'est pas
+        // le satellite regardé dans le parcours de la boucle for
+        int compt = 0;
 
-        Scanner s = new Scanner(order).useDelimiter(":");
-        String satOperator = s.next();
+        // Parcours la liste des satellites du ControlCenter
+        for (Satellite satel : constellation) {
 
-        // On vérifie que l'ordre possède plus que juste le satellite, sinon on
-        // redemmande l'ordre
+            // Vérifie si le satellite demandé par l'opérateur correspond à celui dans le
+            // parcours de la boucle for
+            if (satel.getName().equals(satellite)) {
 
-        // Commande qui permet d'arrêter d'envoyer des ordres
-        if (satOperator.equals("stop")) {
-            sc.close();
-            s.close();
-            System.exit(0);
-        }
+                // On envoie la commande au satellite en question. Il nous retourne "OK", "KO"
+                // (avec spécifications) ou la mesure.
+                String data = satel.getSatelliteControl().invokeCommand(subsystem, message, this.mesureCompt);
+                this.stateCommand = data;
+                // Si on doit archiver la mesure alors data contiendra "mesure"
 
-        String correctCommand = satOperator;
-
-        if (correctCommand.length() == order.length()) {
-            return;
-        }
-
-        String subsysOperator = s.next();
-
-        // On vérifie que l'ordre possède plus que juste le satellite et le sous-système
-        correctCommand = correctCommand + ":" + subsysOperator;
-        if (!(correctCommand.length() == order.length())) {
-            String doesOperator = s.next();
-
-            // On vérifie que l'ordre ne possède pas trop données
-            correctCommand = correctCommand + ":" + doesOperator;
-            if (correctCommand.length() == order.length()) {
-                // compteur qui s'incrémente si le satellite demandé par l'utilisateur n'est pas
-                // le satellite regardé dans le parcours de la boucle for
-                int compt = 0;
-
-                // Parcours la liste des satellites du ControlCenter
-                for (Satellite satel : constellation) {
-
-                    // Vérifie si le satellite demandé par l'opérateur correspond à celui dans le
-                    // parcours de la boucle for
-                    if (satel.equals(satOperator)) {
-
-                        // On envoie la commande au satellite en question. Il nous retourne "OK", "KO"
-                        // (avec spécifications) ou la mesure.
-                        String data = satel.getSatelliteControl().invokeCommand(subsysOperator, doesOperator,
-                                this.mesureCompt);
-                        this.stateCommand = data;
-                        // Si on doit archiver la mesure alors data contiendra "mesure"
-
-                        if (data.contains("mesure")) {
-
-                            System.out.println("OK");
-                            this.stateCommand = "OK";
-                            addArchive(data);
-                            // Incrémentation du compteur de mesure
-                            this.mesureCompt++;
-                        } else {
-                            System.out.println(data);
-                        }
-
-                    }
-
-                    // Incrémentation si le satellite demandé n'est pas le satellite regardé
-                    else {
-                        compt++;
-                    }
+                if (data.contains("mesure")) {
+                    // dans le cas où il s'agit d'une T/M
+                    System.out.println("OK");
+                    this.stateCommand = "OK";
+                    addArchive(data);
+                    // Incrémentation du compteur de mesure
+                    this.mesureCompt++;
+                } else {
+                    System.out.println(data);
                 }
-
-                // Si le satellite demandé n'est pas connu du ControlCenter
-                if (compt == constellation.size()) {
-                    System.out.println("KO : Wrong satellite");
-                    this.stateCommand = "KO : Wrong satellite";
-                }
-                // }
 
             }
+
+            // Incrémentation si le satellite demandé n'est pas le satellite regardé
+            else {
+                compt++;
+            }
+        }
+
+        // Si le satellite demandé n'est pas connu du ControlCenter
+        if (compt == constellation.size()) {
+            System.out.println("KO : Wrong satellite");
+            this.stateCommand = "KO : Wrong satellite";
         }
 
     }

@@ -1,27 +1,20 @@
-package View.Controllers;
+package Controller.ActionListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JLabel;
-import javax.swing.JTextPane;
 
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
-
+import Controller.ControlCenter;
 import View.Gui;
-import View.Model;
 
 import java.awt.Color;
 
-public class ClickedButton implements ActionListener {
+public class ButtonListener implements ActionListener {
     /**
      * Permettent de faire la T/C ou T/M
      */
-    protected Model model;
+    protected ControlCenter cc;
     protected String nameSat;
     protected String nameSS;
     protected String message;
@@ -37,12 +30,13 @@ public class ClickedButton implements ActionListener {
      * 
      * @param cc
      * @param nameSat
-     * @param nameProcedure
+     * @param nameSS
      * @param message
      * @param view
+     * @param label
      */
-    public ClickedButton(Model model, String nameSat, String nameSS, String message, Gui view, JLabel label) {
-        this.model = model;
+    public ButtonListener(ControlCenter cc, String nameSat, String nameSS, String message, Gui view, JLabel label) {
+        this.cc = cc;
         this.nameSat = nameSat;
         this.nameSS = nameSS;
         this.message = message;
@@ -52,14 +46,14 @@ public class ClickedButton implements ActionListener {
 
     @Override
     /**
-     * Permet de faire effectuer la commande au control center et de changer la
-     * couleur
+     * Permet de faire effectuer la commande au control center et de demander au
+     * view de se mettre à jour (label et historique)
      */
     public void actionPerformed(ActionEvent e) {
         System.out.println(nameSat + ":" + nameSS + ":" + message);
 
         // fait appel au model pour exécuter la commande
-        cc.command(nameSat + ":" + nameSS + ":" + message);
+        cc.command(nameSat, nameSS, message);
 
         // Si la commande est valide, on renvoie true pour que le controlleur change
         // l'interface de l'ihm

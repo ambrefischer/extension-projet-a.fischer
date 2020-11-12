@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -28,18 +27,18 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
-import View.Controllers.*;
-import Controller.ControlCenter;
-import Models.SatelliteFamilies.Satellite;
-
-//new JLabel("<html><font color=black size=+10> + ss.getName() + </i></font></html>")
-
 public class Gui {
     /** fenêtre de l'ihm */
     private JFrame window;
+
+    /** sauvegarde les noms de satellites */
     private ArrayList<String> constellation;
+
+    /** garde en mémoire tous les boutons et les labels dans des HashMap */
     private HashMap<String, HashMap<String, HashMap<String, JButton>>> satMap;
     private HashMap<String, HashMap<String, JLabel>> labelSatMap;
+
+    /** Historique */
     private JTextPane textPane;
 
     /**
@@ -49,7 +48,6 @@ public class Gui {
      * @throws IOException
      */
     public Gui(ArrayList<String> constellation) throws IOException {
-
         this.constellation = constellation;
 
         // fenêtre de l'ihm
@@ -58,12 +56,19 @@ public class Gui {
 
         // ajout de la console de sortie
         EmptyBorder eb = new EmptyBorder(new Insets(50, 50, 50, 50));
-        JTextPane textPane = new JTextPane();
+        textPane = new JTextPane();
         textPane.setBorder(eb);
         JScrollPane scrollPane = new JScrollPane(textPane);
 
         // ajout des onglets
         JTabbedPane tabs = new JTabbedPane();
+
+        // satMap contient la HashMap des sous-systèmes contenant également chaque
+        // bouton avec comme clé le satellite correspondant
+        satMap = new HashMap<String, HashMap<String, HashMap<String, JButton>>>();
+        // labelSatMap contient la HashMap des sous-systèmes contenant également le
+        // label avec comme clé le satellite correspondant
+        labelSatMap = new HashMap<String, HashMap<String, JLabel>>();
 
         // pour chaque satellite :
         for (int i = 0; i < constellation.size(); i++) {
@@ -77,7 +82,10 @@ public class Gui {
             JPanel panel = new JPanel();
             panel.setLayout(new GridLayout(nbSS, 1));
 
+            // ssSysMap contient la HashMap des boutons avec comme clés les noms des
+            // sous-systèmes
             HashMap<String, HashMap<String, JButton>> ssSysMap = new HashMap<String, HashMap<String, JButton>>();
+            // labelSsSysMap contient le label correspond au nom du sous-système
             HashMap<String, JLabel> labelSsSysMap = new HashMap<String, JLabel>();
 
             // pour chaque sous-système de satellite :
@@ -87,6 +95,7 @@ public class Gui {
                 String ssName = subsystems.get(j);
                 JLabel label = new JLabel(ssName);
 
+                // sauvegarde du label
                 labelSsSysMap.put(ssName, label);
 
                 // Création de boutons
@@ -94,16 +103,14 @@ public class Gui {
                 JButton button_OFF = new JButton("OFF");
                 JButton button_DATA = new JButton("DATA");
 
+                // sauvegarde des boutons
                 HashMap<String, JButton> buttonsMap = new HashMap<String, JButton>();
                 buttonsMap.put("ON", button_ON);
                 buttonsMap.put("OFF", button_OFF);
                 buttonsMap.put("DATA", button_DATA);
 
+                // on met dans la HashMap
                 ssSysMap.put(ssName, buttonsMap);
-
-                // Raccord des signaux
-                // setControllers(button_ON, button_OFF, button_DATA, satellite, ssName, label,
-                // tPane);
 
                 // Assemblage
                 panel.add(label);
@@ -112,8 +119,10 @@ public class Gui {
                 panel.add(button_DATA);
             }
 
+            // on met dans les HashMap
             labelSatMap.put(satellite, labelSsSysMap);
             satMap.put(satellite, ssSysMap);
+
             // on met le tout dans l'onglet
             tabs.addTab(satellite, panel);
         }
@@ -126,6 +135,7 @@ public class Gui {
         window.setLocation(dim.width / 2 - window.getWidth() / 2, dim.height / 2 - window.getHeight() / 2);
         window.pack();
         window.setVisible(true);
+
     }
 
     /**
@@ -137,42 +147,54 @@ public class Gui {
         return this.window;
     }
 
+    /**
+     * Setter
+     * 
+     * @param constellation
+     * @return constellation
+     */
     public Gui constellation(ArrayList<String> constellation) {
         this.constellation = constellation;
         return this;
     }
 
+    /**
+     * Getter
+     * 
+     * @return constellation
+     */
     public ArrayList<String> getConstellation() {
         return this.constellation;
     }
 
+    /**
+     * Getter
+     * 
+     * @return satMap
+     */
     public HashMap<String, HashMap<String, HashMap<String, JButton>>> getSatMap() {
         return this.satMap;
     }
 
-    public void setWindow(JFrame window) {
-        this.window = window;
-    }
-
-    public void setConstellation(ArrayList<String> constellation) {
-        this.constellation = constellation;
-    }
-
-    public void setSatMap(HashMap<String, HashMap<String, HashMap<String, JButton>>> satMap) {
-        this.satMap = satMap;
-    }
-
+    /**
+     * Getter
+     * 
+     * @return labelSatMap
+     */
     public HashMap<String, HashMap<String, JLabel>> getLabelSatMap() {
         return this.labelSatMap;
     }
 
-    public void setLabelSatMap(HashMap<String, HashMap<String, JLabel>> labelSatMap) {
-        this.labelSatMap = labelSatMap;
-    }
-
+    /**
+     * Ajoute du texte sur le textPane avec la couleur color et met le label de la
+     * même couleur
+     * 
+     * @param label
+     * @param color
+     * @param text
+     */
     public void refresh(JLabel label, Color color, String text) {
-
-        appendToPane(textPane, text + "\n", color);
+        appendToPane(text + "\n", color);
         label.setForeground(color);
 
     }
@@ -185,7 +207,7 @@ public class Gui {
      * @param msg
      * @param c
      */
-    public void appendToPane(JTextPane textPane, String msg, Color c) {
+    public void appendToPane(String msg, Color c) {
         textPane.setEditable(true);
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
