@@ -30,6 +30,7 @@ public class ClickedButton implements ActionListener {
      * Permettent de changer la couleur dans l'ihm
      */
     protected Gui view;
+    protected JLabel label;
 
     /**
      * Constructeur
@@ -40,12 +41,13 @@ public class ClickedButton implements ActionListener {
      * @param message
      * @param view
      */
-    public ClickedButton(Model model, String nameSat, String nameSS, String message, Gui view) {
+    public ClickedButton(Model model, String nameSat, String nameSS, String message, Gui view, JLabel label) {
         this.model = model;
         this.nameSat = nameSat;
         this.nameSS = nameSS;
         this.message = message;
         this.view = view;
+        this.label = label;
     }
 
     @Override
@@ -62,33 +64,12 @@ public class ClickedButton implements ActionListener {
         // Si la commande est valide, on met le nom du sous-système en vert
         // et on ajoute la commande dans la console de sortie
         if (model.getStatusCommand()) {
-            appendToPane(textPane, nameSat + ":" + nameSS + ":" + message + "\n", Color.GREEN);
-            label.setForeground(Color.GREEN);
+            view.refresh(label, Color.GREEN, nameSat + ":" + nameSS + ":" + message);
         }
         // sinon en rouge
         else {
-            appendToPane(textPane, nameSat + ":" + nameSS + ":" + message + "\n", Color.RED);
-            label.setForeground(Color.RED);
+            view.refresh(label, Color.RED, nameSat + ":" + nameSS + ":" + message)
         }
     }
 
-    /**
-     * ajoute la T/C ou T/M la couleur dans la console de sortie et lui met une
-     * couleur
-     * 
-     * @param textPane
-     * @param msg
-     * @param c
-     */
-    public void appendToPane(JTextPane textPane, String msg, Color c) {
-        textPane.setEditable(true);
-        StyleContext sc = StyleContext.getDefaultStyleContext();
-        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
-
-        int len = textPane.getDocument().getLength();
-        textPane.setCaretPosition(len);
-        textPane.setCharacterAttributes(aset, false);
-        textPane.replaceSelection(msg);
-        textPane.setEditable(false);
-    }
 };

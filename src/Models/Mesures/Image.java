@@ -1,4 +1,4 @@
-package Mesures;
+package Models.Mesures;
 
 import java.util.Arrays;
 import java.util.Random;

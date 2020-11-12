@@ -1,4 +1,4 @@
-package Plateforme.Satellites.SubSystems;
+package Models.SubSystems;
 
 public abstract class SubSystem {
 

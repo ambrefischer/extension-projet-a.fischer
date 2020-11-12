@@ -1,4 +1,4 @@
-package Mesures;
+package Models.Mesures;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

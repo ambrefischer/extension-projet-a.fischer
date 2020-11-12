@@ -1,22 +1,32 @@
-package Plateforme;
+package Controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
-import Plateforme.Satellites.SatelliteFamilies.Satellite;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 
-public class ControlCenter {
+import Models.SatelliteFamilies.Satellite;
+import View.Gui;
+import View.Model;
+import View.Controllers.ClickedButton;
+import View.Controllers.ClickedButtonONOFF;
+
+public class ControlCenter implements ActionListener {
 
     /** archive des mesures effectuées */
     private ArrayList<String> archive;
 
     /** ensemble des satellites visible par le ControlCenter */
-    private ArrayList<Satellite> constellation;
+    private ArrayList<String> constellation;
 
     /** décompte utilisé pour quantifier le nombre de mesures archivées */
     private int mesureCompt = 1;
 
     private String stateCommand = "";
+
+    private Gui view;
 
     /**
      * Constructeur, avec archive et constellation
@@ -25,7 +35,7 @@ public class ControlCenter {
      * @param constellation
      */
 
-    public ControlCenter(ArrayList<String> archive, ArrayList<Satellite> constellation) {
+    public ControlCenter(ArrayList<String> archive, ArrayList<String> constellation) {
         this.archive = archive;
         this.constellation = constellation;
     }
@@ -47,7 +57,7 @@ public class ControlCenter {
      * 
      * @return constellation
      */
-    public ArrayList<Satellite> getConstellation() {
+    public ArrayList<String> getConstellation() {
         return this.constellation;
     }
 
@@ -70,6 +80,30 @@ public class ControlCenter {
     @Override
     public String toString() {
         return "{" + " archive='" + getArchive() + "'" + ", constellation='" + getConstellation() + "'" + "}";
+    }
+
+    public void initView() {
+        view.constellation(this.constellation);
+    }
+
+    public void initController() {
+        HashMap<String, HashMap<String, HashMap<String, JButton>>> satMap = view.getSatMap();
+        HashMap<String, HashMap<String, JLabel>> labelSatMap = view.getLabelSatMap();
+
+        for (String satKey : satMap.keySet()) {
+            HashMap<String, HashMap<String, JButton>> ssSysMap = satMap.get(satKey);
+            HashMap<String, JLabel> labelSsSysMap = labelSatMap.get(satKey);
+
+            for (String ssSysKey : ssSysMap.keySet()) {
+                HashMap<String, JButton> buttonsMap = ssSysMap.get(ssSysKey);
+                buttonsMap.get("ON").addActionListener(new ClickedButton(new Model(this), satKey, ssSysKey, "ON", view,
+                        labelSsSysMap.get(buttonsMap)));
+                buttonsMap.get("OFF").addActionListener(new ClickedButton(new Model(this), satKey, ssSysKey, "ON", view,
+                        labelSsSysMap.get(buttonsMap)));
+                buttonsMap.get("DATA").addActionListener(new ClickedButton(new Model(this), satKey, ssSysKey, "DATA",
+                        view, labelSsSysMap.get(buttonsMap)));
+            }
+        }
     }
 
     /**

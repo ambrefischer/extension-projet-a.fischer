@@ -3,11 +3,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import Plateforme.ControlCenter;
-import Plateforme.Satellites.*;
-import Plateforme.Satellites.SatelliteFamilies.*;
-import Plateforme.Satellites.SubSystems.Imager;
-import Plateforme.Satellites.SubSystems.SubSystem;
+
+import Controller.ControlCenter;
+
+import Models.OnBoardSystem;
+import Models.SatelliteFamilies.*;
+import Models.SubSystems.*;
 
 public class PlateformCreation {
 

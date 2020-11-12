@@ -1,8 +1,8 @@
-package Plateforme.Satellites;
+package Models;
 
 import java.util.ArrayList;
 
-import Plateforme.Satellites.SubSystems.SubSystem;
+import Models.SubSystems.SubSystem;
 
 public class OnBoardSystem {
 

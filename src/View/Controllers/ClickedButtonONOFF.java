@@ -1,4 +1,4 @@
-package Gui.Controllers;
+package View.Controllers;
 
 import java.awt.event.ActionEvent;
 
@@ -6,7 +6,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 
-import Gui.Model;
+import View.Model;
 
 import java.awt.Color;
 

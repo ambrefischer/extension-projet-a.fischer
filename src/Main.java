@@ -1,12 +1,12 @@
 import Controller.ControlCenter;
-import View.View;
+import View.Gui;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            Model m = new Model("Sylvain", "Saurel");
-            View v = new View("MVC with SSaurel");
-            Controller c = new Controller(m, v);
+            Gui v = new Gui();
+            PlateformCreation pc = new PlateformCreation();
+            ControlCenter c = pc.createCC();
             c.initController();
         } catch (Exception e) {
             System.out.println(e.getMessage());

@@ -1,6 +1,6 @@
-package Plateforme.Satellites.SatelliteFamilies;
+package Models.SatelliteFamilies;
 
-import Plateforme.Satellites.OnBoardSystem;
+import Models.OnBoardSystem;
 
 public class Satellite {
 

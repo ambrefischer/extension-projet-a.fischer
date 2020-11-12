@@ -1,6 +1,6 @@
-package Gui;
+package View;
 
-import Plateforme.ControlCenter;
+import Controller.ControlCenter;
 
 public class Model {
 

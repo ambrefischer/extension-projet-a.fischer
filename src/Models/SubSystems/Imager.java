@@ -1,6 +1,6 @@
-package Plateforme.Satellites.SubSystems;
+package Models.SubSystems;
 
-import Mesures.Image;
+import Models.Mesures.Image;
 
 public class Imager extends SubSystem {
 
