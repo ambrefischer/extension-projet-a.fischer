@@ -1,5 +1,6 @@
 package Controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -13,13 +14,14 @@ import View.Model;
 import View.Controllers.ClickedButton;
 import View.Controllers.ClickedButtonONOFF;
 
-public class ControlCenter implements ActionListener {
+public class ControlCenter {
 
     /** archive des mesures effectuées */
     private ArrayList<String> archive;
 
     /** ensemble des satellites visible par le ControlCenter */
-    private ArrayList<String> constellation;
+    private ArrayList<Satellite> constellation;
+    private ArrayList<String> constelString = new ArrayList<String>();
 
     /** décompte utilisé pour quantifier le nombre de mesures archivées */
     private int mesureCompt = 1;
@@ -33,11 +35,19 @@ public class ControlCenter implements ActionListener {
      * 
      * @param archive
      * @param constellation
+     * @throws IOException
      */
 
-    public ControlCenter(ArrayList<String> archive, ArrayList<String> constellation) {
+    public ControlCenter(ArrayList<String> archive, ArrayList<Satellite> constellation) throws IOException {
         this.archive = archive;
         this.constellation = constellation;
+
+        for (Satellite satellite : constellation) {
+            constelString.add(satellite.getName());
+        }
+
+        view = new Gui(constelString);
+
     }
 
     /**
@@ -57,7 +67,7 @@ public class ControlCenter implements ActionListener {
      * 
      * @return constellation
      */
-    public ArrayList<String> getConstellation() {
+    public ArrayList<Satellite> getConstellation() {
         return this.constellation;
     }
 
@@ -83,7 +93,7 @@ public class ControlCenter implements ActionListener {
     }
 
     public void initView() {
-        view.constellation(this.constellation);
+        view.constellation(constelString);
     }
 
     public void initController() {
@@ -157,7 +167,7 @@ public class ControlCenter implements ActionListener {
 
                     // Vérifie si le satellite demandé par l'opérateur correspond à celui dans le
                     // parcours de la boucle for
-                    if (satel.getName().equals(satOperator)) {
+                    if (satel.equals(satOperator)) {
 
                         // On envoie la commande au satellite en question. Il nous retourne "OK", "KO"
                         // (avec spécifications) ou la mesure.

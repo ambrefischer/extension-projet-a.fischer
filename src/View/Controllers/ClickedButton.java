@@ -59,17 +59,16 @@ public class ClickedButton implements ActionListener {
         System.out.println(nameSat + ":" + nameSS + ":" + message);
 
         // fait appel au model pour exécuter la commande
-        model.doTM(nameSat, nameSS, message);
+        cc.command(nameSat + ":" + nameSS + ":" + message);
 
-        // Si la commande est valide, on met le nom du sous-système en vert
-        // et on ajoute la commande dans la console de sortie
-        if (model.getStatusCommand()) {
+        // Si la commande est valide, on renvoie true pour que le controlleur change
+        // l'interface de l'ihm
+        if (cc.getStateCommand().equals("OK")) {
             view.refresh(label, Color.GREEN, nameSat + ":" + nameSS + ":" + message);
+        } else {
+            view.refresh(label, Color.RED, nameSat + ":" + nameSS + ":" + message);
         }
-        // sinon en rouge
-        else {
-            view.refresh(label, Color.RED, nameSat + ":" + nameSS + ":" + message)
-        }
+
     }
 
-};
+}

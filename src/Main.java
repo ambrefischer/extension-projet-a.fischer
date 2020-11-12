@@ -4,7 +4,6 @@ import View.Gui;
 public class Main {
     public static void main(String[] args) {
         try {
-            Gui v = new Gui();
             PlateformCreation pc = new PlateformCreation();
             ControlCenter c = pc.createCC();
             c.initController();

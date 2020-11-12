@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -194,16 +195,6 @@ public class Gui {
         textPane.setCharacterAttributes(aset, false);
         textPane.replaceSelection(msg);
         textPane.setEditable(false);
-    }
-
-    private void setControllers(JButton button_ON, JButton button_OFF, JButton button_DATA, Satellite sat,
-            String ssName, JLabel label, JTextPane tPane) {
-        button_ON.addActionListener(new ClickedButtonONOFF(new Model(this.cc), sat.getName(), ssName, "ON", label,
-                tPane, button_ON, button_OFF));
-        button_OFF.addActionListener(new ClickedButtonONOFF(new Model(this.cc), sat.getName(), ssName, "OFF", label,
-                tPane, button_ON, button_OFF));
-        button_DATA
-                .addActionListener(new ClickedButton(new Model(this.cc), sat.getName(), ssName, "DATA", label, tPane));
     }
 
     /**
