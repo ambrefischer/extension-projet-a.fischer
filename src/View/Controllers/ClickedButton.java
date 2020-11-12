@@ -1,7 +1,8 @@
-package Gui.Controllers;
+package View.Controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
@@ -11,7 +12,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
-import Gui.Model;
+import View.Gui;
+import View.Model;
 
 import java.awt.Color;
 
@@ -27,8 +29,7 @@ public class ClickedButton implements ActionListener {
     /**
      * Permettent de changer la couleur dans l'ihm
      */
-    protected JLabel label;
-    protected JTextPane textPane;
+    protected Gui view;
 
     /**
      * Constructeur
@@ -37,16 +38,14 @@ public class ClickedButton implements ActionListener {
      * @param nameSat
      * @param nameProcedure
      * @param message
-     * @param label
-     * @param textPane
+     * @param view
      */
-    public ClickedButton(Model model, String nameSat, String nameSS, String message, JLabel label, JTextPane textPane) {
+    public ClickedButton(Model model, String nameSat, String nameSS, String message, Gui view) {
         this.model = model;
         this.nameSat = nameSat;
         this.nameSS = nameSS;
         this.message = message;
-        this.label = label;
-        this.textPane = textPane;
+        this.view = view;
     }
 
     @Override
