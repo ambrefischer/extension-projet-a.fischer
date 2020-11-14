@@ -27,12 +27,14 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+import Models.SatelliteFamilies.Satellite;
+
 public class Gui {
     /** fenêtre de l'ihm */
     private JFrame window;
 
     /** sauvegarde les noms de satellites */
-    private ArrayList<String> constellation;
+    private ArrayList<String> constelString;
 
     /** garde en mémoire tous les boutons et les labels dans des HashMap */
     private HashMap<String, HashMap<String, HashMap<String, JButton>>> satMap;
@@ -47,8 +49,14 @@ public class Gui {
      * 
      * @throws IOException
      */
-    public Gui(ArrayList<String> constellation) throws IOException {
-        this.constellation = constellation;
+    public Gui(ArrayList<Satellite> constellation) throws IOException {
+        // construit constelString à partir des satellites contenus dans constellation
+        ArrayList<String> constelString = new ArrayList<String>();
+        for (Satellite satellite : constellation) {
+            constelString.add(satellite.getName());
+        }
+
+        this.constelString = constelString;
 
         // fenêtre de l'ihm
         JFrame window = new JFrame("Control Center");
@@ -71,8 +79,8 @@ public class Gui {
         labelSatMap = new HashMap<String, HashMap<String, JLabel>>();
 
         // pour chaque satellite :
-        for (int i = 0; i < constellation.size(); i++) {
-            String satellite = constellation.get(i);
+        for (int i = 0; i < constelString.size(); i++) {
+            String satellite = constelString.get(i);
 
             // on récupère les noms des sous-systèmes dans le dossier ARCHI
             ArrayList<String> subsystems = readFile("src/ARCHI/" + satellite);
@@ -150,21 +158,21 @@ public class Gui {
     /**
      * Setter
      * 
-     * @param constellation
-     * @return constellation
+     * @param constelString
+     * @return constelString
      */
-    public Gui constellation(ArrayList<String> constellation) {
-        this.constellation = constellation;
+    public Gui constelString(ArrayList<String> constelString) {
+        this.constelString = constelString;
         return this;
     }
 
     /**
      * Getter
      * 
-     * @return constellation
+     * @return constelString
      */
-    public ArrayList<String> getConstellation() {
-        return this.constellation;
+    public ArrayList<String> getConstelString() {
+        return this.constelString;
     }
 
     /**
@@ -196,7 +204,25 @@ public class Gui {
     public void refresh(JLabel label, Color color, String text) {
         appendToPane(text + "\n", color);
         label.setForeground(color);
+    }
 
+    public void setButtonColor(JButton button_ON, JButton button_OFF, String message) {
+        switch (message) {
+            // si le bouton ON est clické alors seulenemnt lui apparaît en bleu
+            case "ON":
+                button_ON.setForeground(Color.BLUE);
+                button_OFF.setForeground(Color.BLACK);
+                break;
+
+            // si le bouton OFF est clické alors seulenemnt lui apparaît en bleu
+            case "OFF":
+                button_OFF.setForeground(Color.BLUE);
+                button_ON.setForeground(Color.BLACK);
+                break;
+
+            default:
+                break;
+        }
     }
 
     /**

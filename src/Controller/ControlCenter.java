@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import Controller.ActionListener.ButtonListener;
+import Controller.ActionListener.ButtonONOFFListener;
 import Models.SatelliteFamilies.Satellite;
 import View.Gui;
 
@@ -38,19 +39,10 @@ public class ControlCenter {
      * @param constellation
      * @throws IOException
      */
-    public ControlCenter(ArrayList<String> archive, ArrayList<Satellite> constellation) throws IOException {
+    public ControlCenter(ArrayList<String> archive, ArrayList<Satellite> constellation, Gui view) throws IOException {
         this.archive = archive;
         this.constellation = constellation;
-
-        // construit constelString à partir des satellites contenus dans constellation
-        constelString = new ArrayList<String>();
-
-        for (Satellite satellite : constellation) {
-            constelString.add(satellite.getName());
-        }
-
-        // construction de la view
-        view = new Gui(constelString);
+        this.view = view;
     }
 
     /**
@@ -102,7 +94,7 @@ public class ControlCenter {
 
     /** change la constellation de l'ihm */
     public void initView() {
-        view.constellation(constelString);
+        view.constelString(constelString);
     }
 
     /**
@@ -123,12 +115,12 @@ public class ControlCenter {
                 // on récupère tous les boutons existants de la HashMap du view pour leur
                 // associer un ButtonListener en spécifiant le nom du satellite et le nom du
                 // sous-système correspondand à chaque fois
-                ButtonListener onListener = new ButtonListener(this, satKey, ssSysKey, "ON", view,
-                        labelSsSysMap.get(ssSysKey));
+                ButtonListener onListener = new ButtonONOFFListener(this, satKey, ssSysKey, "ON", view,
+                        labelSsSysMap.get(ssSysKey), buttonsMap.get("ON"), buttonsMap.get("OFF"));
                 buttonsMap.get("ON").addActionListener(onListener);
 
-                ButtonListener offListener = new ButtonListener(this, satKey, ssSysKey, "OFF", view,
-                        labelSsSysMap.get(ssSysKey));
+                ButtonListener offListener = new ButtonONOFFListener(this, satKey, ssSysKey, "OFF", view,
+                        labelSsSysMap.get(ssSysKey), buttonsMap.get("ON"), buttonsMap.get("OFF"));
                 buttonsMap.get("OFF").addActionListener(offListener);
 
                 ButtonListener dataListener = new ButtonListener(this, satKey, ssSysKey, "DATA", view,

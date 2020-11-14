@@ -4,15 +4,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import Controller.ControlCenter;
-
 import Models.OnBoardSystem;
 import Models.SatelliteFamilies.*;
 import Models.SubSystems.*;
 
 public class PlateformCreation {
 
-    public ControlCenter createCC() throws IOException {
+    public ArrayList<Satellite> createConstellation() throws IOException {
 
         // Création de ISAESAT de la famille des ISAESatellite avec deux sous-systèmes
         // de type Bitmap et son systeme de contrôle embarqué
@@ -45,12 +43,8 @@ public class PlateformCreation {
         ArrayList<Satellite> constel = new ArrayList<>();
         constel.add(ISAESAT);
         constel.add(XSAT);
-        ArrayList<String> arch = new ArrayList<>();
-        ControlCenter cc = new ControlCenter(arch, constel);
 
-        System.out.println(cc);
-
-        return cc;
+        return constel;
 
     }
 
